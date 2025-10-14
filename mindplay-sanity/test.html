@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MindPlay Sanity API Tester</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #121212; color: #fff; }
+    button { margin: 5px; padding: 8px 12px; background: #2b2b2b; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #444; }
+    textarea { width: 100%; height: 80px; margin-bottom: 10px; }
+    pre { background: #1e1e1e; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>🧠 MindPlay Sanity API Tester</h2>
+  <label>Session ID:</label><br>
+  <input id="sessionId" value="abc123"><br><br>
+
+  <label>User Message:</label><br>
+  <textarea id="userMessage"></textarea>
+  <button onclick="sendMessage()">Send Message</button>
+
+  <h3>Results:</h3>
+  <pre id="output"></pre>
+
+  <button onclick="getSanity()">Get Current Sanity</button>
+  <button onclick="realityCheck()">Reality Check</button>
+  <button onclick="calmMode()">Calm Mode</button>
+
+  <script>
+    const baseUrl = "http://localhost:5001/api/sanity"; // backend port
+
+    async function sendMessage() {
+      const body = {
+        sessionId: document.getElementById("sessionId").value,
+        text: document.getElementById("userMessage").value,
+        typedDurationMs: 1200
+      };
+      const res = await fetch(`${baseUrl}/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      document.getElementById("output").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getSanity() {
+      const sessionId = document.getElementById("sessionId").value;
+      const res = await fetch(`${baseUrl}?sessionId=${sessionId}`);
+      document.getElementById("output").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function realityCheck() {
+      const body = {
+        sessionId: document.getElementById("sessionId").value,
+        playerThinksTrue: true
+      };
+      const res = await fetch(`${baseUrl}/reality-check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      document.getElementById("output").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function calmMode() {
+      const body = { sessionId: document.getElementById("sessionId").value };
+      const res = await fetch(`${baseUrl}/calm-mode`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      document.getElementById("output").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+  </script>
+</body>
+</html>
+
